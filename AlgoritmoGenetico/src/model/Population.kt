@@ -6,27 +6,29 @@ abstract class Population(populationSize: Int,
                           private val stopCondition: StopCondition) {
 
     var currentGeneration: Int = 0
-    val individuals: List<Individual>
+    var individuals: List<Individual>
 
     init {
         individuals = MutableList(populationSize) { initializationFunction.initialize() }
+        evaluate()
     }
 
-    fun evaluate() {
+    private fun evaluate() {
         individuals.forEach { individual ->
             individual.evaluate()
         }
     }
     
-    fun generateNextGeneration() {
+    private fun generateNextGeneration() {
         currentGeneration++
         val parentsLists = populationSelection.selectParents(this)
-        parentsLists.forEach { parents ->
-            parents.first().crossover(parents.subList(1, parents.size))
+        var children = parentsLists.flatMap { parents ->
+            parents[0].crossover(parents[1])
         }
-        individuals.forEach { individual ->
+        children = children.map { individual ->
             individual.mutate()
         }
+        individuals = populationSelection.cutDownPopulation(individuals, children)
         evaluate()
     }
 
@@ -37,6 +39,6 @@ abstract class Population(populationSize: Int,
     }
 
     fun mostFitIndividual(): Individual {
-        return individuals.maxByOrNull { individual -> individual.fitness ?: Double.MIN_VALUE }!!
+        return individuals.maxByOrNull { individual -> individual.fitness!! }!!
     }
 }
