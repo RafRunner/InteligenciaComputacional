@@ -1,6 +1,6 @@
 package model
 
-abstract class Population(populationSize: Int,
+class Population(populationSize: Int,
                           initializationFunction: IndividualInitialization,
                           private val populationSelection: PopulationSelection,
                           private val stopCondition: StopCondition) {
@@ -21,24 +21,28 @@ abstract class Population(populationSize: Int,
     
     private fun generateNextGeneration() {
         currentGeneration++
-        val parentsLists = populationSelection.selectParents(this)
-        var children = parentsLists.flatMap { parents ->
+        val parentsLists = populationSelection.selectParents(this, individuals.size)
+        val children = parentsLists.flatMap { parents ->
             parents[0].crossover(parents[1])
         }
-        children = children.map { individual ->
+        val mutatedChildren = children.map { individual ->
             individual.mutate()
         }
-        individuals = populationSelection.cutDownPopulation(individuals, children)
+        individuals = populationSelection.cutDownPopulation(this, mutatedChildren)
         evaluate()
     }
 
     fun train() {
+        var mostFitIndividual = mostFitIndividual()
+        println("Generation ${currentGeneration}. Best fitness score = ${mostFitIndividual.fitness}. Representation: ${mostFitIndividual.representation()}")
         while (!stopCondition.shouldStop(this)) {
             generateNextGeneration()
+            mostFitIndividual = mostFitIndividual()
+            println("Generation ${currentGeneration}. Best fitness score = ${mostFitIndividual.fitness}. Representation: ${mostFitIndividual.representation()}")
         }
     }
 
     fun mostFitIndividual(): Individual {
-        return individuals.maxByOrNull { individual -> individual.fitness!! }!!
+        return individuals.maxByOrNull { individual -> individual.fitness }!!
     }
 }

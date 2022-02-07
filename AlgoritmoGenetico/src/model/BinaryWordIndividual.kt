@@ -3,9 +3,11 @@ package model
 import java.util.concurrent.ThreadLocalRandom
 
 class BinaryWordIndividual(evaluationFunction: EvaluationFunction,
+                           private val crossOverChance: Double,
                            private val mutationChance: Double,
-                           private val genes: List<List<Boolean>>) : Individual(evaluationFunction) {
+                           val genes: List<List<Boolean>>) : Individual(evaluationFunction) {
 
+    private val wordCount = genes.size
     private val wordSize = genes.first().size
 
     override fun mutate(): Individual {
@@ -36,12 +38,16 @@ class BinaryWordIndividual(evaluationFunction: EvaluationFunction,
     }
 
     private fun createFromGenes(genes: List<List<Boolean>>): BinaryWordIndividual {
-        return BinaryWordIndividual(evaluationFunction, mutationChance, genes)
+        return BinaryWordIndividual(evaluationFunction, crossOverChance, mutationChance, genes)
     }
 
     override fun crossover(partner: Individual): List<Individual> {
         if (partner !is BinaryWordIndividual) {
             throw RuntimeException("Partner must be a BinaryWordIndividual")
+        }
+
+        if (crossOverChance < ThreadLocalRandom.current().nextDouble(0.0, 100.0)) {
+            return listOf(createFromGenes(genes), createFromGenes(partner.genes))
         }
 
         val cuttingPoint = ThreadLocalRandom.current().nextInt(1, wordSize - 1)
@@ -54,5 +60,13 @@ class BinaryWordIndividual(evaluationFunction: EvaluationFunction,
         val child2Genes = child2Chromosome.chunked(wordSize)
 
         return listOf(createFromGenes(child1Genes), createFromGenes(child2Genes))
+    }
+
+    fun geneToString(geneIndex: Int): String {
+        return genes[geneIndex].fold("") { acc, b -> acc + if (b) "1" else "0" }
+    }
+
+    override fun representation(): String {
+        return (0 until wordCount).fold("") { acc, i -> acc + " - " + geneToString(i) }
     }
 }
