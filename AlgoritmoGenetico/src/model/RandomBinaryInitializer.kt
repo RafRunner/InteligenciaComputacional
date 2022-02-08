@@ -9,8 +9,8 @@ class RandomBinaryInitializer(private val evaluationFunction: EvaluationFunction
     override fun initialize(): Individual {
         val genes = List(wordCount) {
             List(wordSize) {
-                Math.random() > 0.5
-            }
+                if (Math.random() > 0.5) '1' else '0'
+            }.joinToString("")
         }
         return BinaryWordIndividual(evaluationFunction, crossOverChance, mutationChance, genes)
     }

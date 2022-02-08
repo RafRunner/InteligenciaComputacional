@@ -22,8 +22,8 @@ class F6EvaluationFunction: EvaluationFunction {
             throw java.lang.RuntimeException("Can only evaluate BinaryWordIndividual")
         }
 
-        val x = geneToDouble(individual.geneToString(0))
-        val y = geneToDouble(individual.geneToString(1))
+        val x = geneToDouble(individual.genes[0])
+        val y = geneToDouble(individual.genes[1])
 
         return f6Function(x, y)
     }

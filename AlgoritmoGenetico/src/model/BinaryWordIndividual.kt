@@ -5,39 +5,39 @@ import java.util.concurrent.ThreadLocalRandom
 class BinaryWordIndividual(evaluationFunction: EvaluationFunction,
                            private val crossOverChance: Double,
                            private val mutationChance: Double,
-                           val genes: List<List<Boolean>>) : Individual(evaluationFunction) {
+                           val genes: List<String>) : Individual(evaluationFunction) {
 
     private val wordCount = genes.size
-    private val wordSize = genes.first().size
+    private val wordSize = genes.first().length
 
     override fun mutate(): Individual {
-        val newGenes = mutableListOf<MutableList<Boolean>>()
+        val newGenes = mutableListOf<String>()
 
         for (gene in genes) {
-            val newGene = mutableListOf<Boolean>()
+            val newGene = StringBuilder()
             for (bit in gene) {
                 if (mutationChance > ThreadLocalRandom.current().nextDouble(0.0, 100.0)) {
-                    newGene.add(!bit)
+                    newGene.append(if (bit == '0') '1' else '0')
                 }
                 else {
-                    newGene.add(bit)
+                    newGene.append(bit)
                 }
             }
-            newGenes.add(newGene)
+            newGenes.add(newGene.toString())
         }
 
         return createFromGenes(newGenes)
     }
 
-    private fun cutGenes(cuttingPoint: Int): List<List<Boolean>> {
-        val chromosome = genes.flatten()
-        val partOne = chromosome.subList(0, cuttingPoint)
-        val partTwo = chromosome.subList(cuttingPoint, chromosome.size)
+    private fun cutGenes(cuttingPoint: Int): List<String> {
+        val chromosome = genes.joinToString("")
+        val partOne = chromosome.substring(0, cuttingPoint)
+        val partTwo = chromosome.substring(cuttingPoint, chromosome.length)
 
         return listOf(partOne, partTwo)
     }
 
-    private fun createFromGenes(genes: List<List<Boolean>>): BinaryWordIndividual {
+    private fun createFromGenes(genes: List<String>): BinaryWordIndividual {
         return BinaryWordIndividual(evaluationFunction, crossOverChance, mutationChance, genes)
     }
 
@@ -50,7 +50,7 @@ class BinaryWordIndividual(evaluationFunction: EvaluationFunction,
             return listOf(createFromGenes(genes), createFromGenes(partner.genes))
         }
 
-        val cuttingPoint = ThreadLocalRandom.current().nextInt(1, wordSize - 1)
+        val cuttingPoint = ThreadLocalRandom.current().nextInt(1, wordSize)
         val myParts = cutGenes(cuttingPoint)
         val partnerParts = partner.cutGenes(cuttingPoint)
         val child1Chromosome = myParts[0] + partnerParts[1]
@@ -62,11 +62,7 @@ class BinaryWordIndividual(evaluationFunction: EvaluationFunction,
         return listOf(createFromGenes(child1Genes), createFromGenes(child2Genes))
     }
 
-    fun geneToString(geneIndex: Int): String {
-        return genes[geneIndex].fold("") { acc, b -> acc + if (b) "1" else "0" }
-    }
-
     override fun representation(): String {
-        return (0 until wordCount).fold("") { acc, i -> acc + " - " + geneToString(i) }
+        return (1 until wordCount).fold(genes[0]) { acc, i -> acc + " - " + genes[i] }
     }
 }

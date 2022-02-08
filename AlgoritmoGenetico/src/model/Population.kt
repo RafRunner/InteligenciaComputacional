@@ -33,16 +33,22 @@ class Population(populationSize: Int,
     }
 
     fun train() {
-        var mostFitIndividual = mostFitIndividual()
-        println("Generation ${currentGeneration}. Best fitness score = ${mostFitIndividual.fitness}. Representation: ${mostFitIndividual.representation()}")
+        printStatistics()
         while (!stopCondition.shouldStop(this)) {
             generateNextGeneration()
-            mostFitIndividual = mostFitIndividual()
-            println("Generation ${currentGeneration}. Best fitness score = ${mostFitIndividual.fitness}. Representation: ${mostFitIndividual.representation()}")
+            printStatistics()
         }
     }
 
     fun mostFitIndividual(): Individual {
         return individuals.maxByOrNull { individual -> individual.fitness }!!
+    }
+
+    private fun fitnessAverage(): Double {
+        return individuals.sumOf { it.fitness } / individuals.size
+    }
+
+    private fun printStatistics() {
+        println("Generation ${currentGeneration}:\t Average fitness: ${fitnessAverage()}.\t Best fitness score = ${mostFitIndividual().fitness}.\t Representation: ${mostFitIndividual().representation()}")
     }
 }
