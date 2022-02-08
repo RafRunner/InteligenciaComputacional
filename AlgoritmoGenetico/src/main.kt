@@ -1,15 +1,12 @@
-import F6.F6EvaluationFunction
+import F6.RandomF6Initializer
 import model.*
 
 fun main() {
     val population = Population(
         100,
-        RandomBinaryInitializer(
-            F6EvaluationFunction(),
+        RandomF6Initializer(
             65.0,
             0.8,
-            2,
-            22
         ),
         ElitistRouletteSelection(),
         GenerationStopCondition(40)

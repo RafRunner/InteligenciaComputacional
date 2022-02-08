@@ -2,10 +2,10 @@ package model
 
 import java.util.concurrent.ThreadLocalRandom
 
-class BinaryWordIndividual(evaluationFunction: EvaluationFunction,
-                           private val crossOverChance: Double,
-                           private val mutationChance: Double,
-                           val genes: List<String>) : Individual(evaluationFunction) {
+open class BinaryWordIndividual(evaluationFunction: EvaluationFunction,
+                                protected val crossOverChance: Double,
+                                protected val mutationChance: Double,
+                                val genes: List<String>) : Individual(evaluationFunction) {
 
     private val wordCount = genes.size
     private val wordSize = genes.first().length
@@ -27,18 +27,6 @@ class BinaryWordIndividual(evaluationFunction: EvaluationFunction,
         }
 
         return createFromGenes(newGenes)
-    }
-
-    private fun cutGenes(cuttingPoint: Int): List<String> {
-        val chromosome = genes.joinToString("")
-        val partOne = chromosome.substring(0, cuttingPoint)
-        val partTwo = chromosome.substring(cuttingPoint, chromosome.length)
-
-        return listOf(partOne, partTwo)
-    }
-
-    private fun createFromGenes(genes: List<String>): BinaryWordIndividual {
-        return BinaryWordIndividual(evaluationFunction, crossOverChance, mutationChance, genes)
     }
 
     override fun crossover(partner: Individual): List<Individual> {
@@ -64,5 +52,17 @@ class BinaryWordIndividual(evaluationFunction: EvaluationFunction,
 
     override fun representation(): String {
         return (1 until wordCount).fold(genes[0]) { acc, i -> acc + " - " + genes[i] }
+    }
+
+    private fun cutGenes(cuttingPoint: Int): List<String> {
+        val chromosome = genes.joinToString("")
+        val partOne = chromosome.substring(0, cuttingPoint)
+        val partTwo = chromosome.substring(cuttingPoint, chromosome.length)
+
+        return listOf(partOne, partTwo)
+    }
+
+    open fun createFromGenes(genes: List<String>): BinaryWordIndividual {
+        return BinaryWordIndividual(evaluationFunction, crossOverChance, mutationChance, genes)
     }
 }

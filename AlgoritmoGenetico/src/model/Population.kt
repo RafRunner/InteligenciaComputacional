@@ -1,9 +1,9 @@
 package model
 
 class Population(populationSize: Int,
-                          initializationFunction: IndividualInitialization,
-                          private val populationSelection: PopulationSelection,
-                          private val stopCondition: StopCondition) {
+                 initializationFunction: IndividualInitialization,
+                 private val populationSelection: PopulationSelection,
+                 private val stopCondition: StopCondition) {
 
     var currentGeneration: Int = 0
     var individuals: List<Individual>
