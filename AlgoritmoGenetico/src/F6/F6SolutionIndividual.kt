@@ -10,8 +10,10 @@ class F6SolutionIndividual(evaluationFunction: EvaluationFunction,
                            genes: List<String>)
     : BinaryWordIndividual(evaluationFunction, crossOverChance, mutationChance, genes) {
 
+    private val doubleFormat = "%.4f"
+
     override fun representation(): String {
-        return "x=${getX()}, y=${getY()}"
+        return super.representation() + " x=${String.format(doubleFormat, getX())}, y=${String.format(doubleFormat, getY())}"
     }
 
     override fun createFromGenes(genes: List<String>): F6SolutionIndividual {

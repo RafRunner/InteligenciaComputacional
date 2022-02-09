@@ -1,5 +1,6 @@
 import F6.RandomF6Initializer
 import model.*
+import kotlin.system.measureTimeMillis
 
 fun main() {
     val population = Population(
@@ -9,8 +10,11 @@ fun main() {
             0.8,
         ),
         ElitistRouletteSelection(),
-        GenerationStopCondition(40)
+        GenerationStopCondition(100),
+        5
     )
 
-    population.train()
+    println("Training time: " + measureTimeMillis {
+        population.train()
+    } + "ms")
 }

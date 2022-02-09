@@ -11,7 +11,7 @@ abstract class Individual(val evaluationFunction: EvaluationFunction) {
     }
 
     abstract fun mutate(): Individual
-    abstract fun crossover(partner: Individual): List<Individual>
+    abstract fun crossover(partners: List<Individual>): List<Individual>
 
     abstract fun representation(): String
 }

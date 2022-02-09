@@ -10,7 +10,7 @@ class ElitistRouletteSelection : PopulationSelection {
 
         val lowestFitness = individuals.minOf { it.fitness }
         val sumFunction = if (lowestFitness < 0) {
-            { a: Double, b: Double -> a + b + lowestFitness }
+            { a: Double, b: Double -> a + b - lowestFitness }
         }
         else {
             { a: Double, b: Double -> a + b  }

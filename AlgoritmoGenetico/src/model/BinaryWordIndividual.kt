@@ -13,9 +13,9 @@ open class BinaryWordIndividual(evaluationFunction: EvaluationFunction,
     override fun mutate(): Individual {
         val newGenes = mutableListOf<String>()
 
-        for (gene in genes) {
+       genes.forEach { gene ->
             val newGene = StringBuilder()
-            for (bit in gene) {
+            gene.forEach { bit ->
                 if (mutationChance > ThreadLocalRandom.current().nextDouble(0.0, 100.0)) {
                     newGene.append(if (bit == '0') '1' else '0')
                 }
@@ -29,7 +29,11 @@ open class BinaryWordIndividual(evaluationFunction: EvaluationFunction,
         return createFromGenes(newGenes)
     }
 
-    override fun crossover(partner: Individual): List<Individual> {
+    override fun crossover(partners: List<Individual>): List<Individual> {
+        if (partners.size != 1) {
+            throw RuntimeException("There must be a single partner")
+        }
+        val partner = partners.first()
         if (partner !is BinaryWordIndividual) {
             throw RuntimeException("Partner must be a BinaryWordIndividual")
         }

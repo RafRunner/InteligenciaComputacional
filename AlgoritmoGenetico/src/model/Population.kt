@@ -3,12 +3,16 @@ package model
 class Population(populationSize: Int,
                  initializationFunction: IndividualInitialization,
                  private val populationSelection: PopulationSelection,
-                 private val stopCondition: StopCondition) {
+                 private val stopCondition: StopCondition,
+                 resolution: Int = 16) {
 
     var currentGeneration: Int = 0
     var individuals: List<Individual>
 
+    private val doubleFormat: String
+
     init {
+        doubleFormat = "%.${resolution}f"
         individuals = MutableList(populationSize) { initializationFunction.initialize() }
         evaluate()
     }
@@ -23,7 +27,7 @@ class Population(populationSize: Int,
         currentGeneration++
         val parentsLists = populationSelection.selectParents(this, individuals.size)
         val children = parentsLists.flatMap { parents ->
-            parents[0].crossover(parents[1])
+            parents.first().crossover(parents.drop(1))
         }
         val mutatedChildren = children.map { individual ->
             individual.mutate()
@@ -48,7 +52,10 @@ class Population(populationSize: Int,
         return individuals.sumOf { it.fitness } / individuals.size
     }
 
+    private fun formatDouble(a: Double): String = String.format(doubleFormat, a)
+
     private fun printStatistics() {
-        println("Generation ${currentGeneration}:\t Average fitness: ${fitnessAverage()}.\t Best fitness score = ${mostFitIndividual().fitness}.\t Representation: ${mostFitIndividual().representation()}")
+        val mostFitIndividual = mostFitIndividual()
+        println("Generation ${currentGeneration}:\t Average fitness: ${formatDouble(fitnessAverage())}.\t Best fitness = ${formatDouble(mostFitIndividual.fitness)}.\t Best solution: ${mostFitIndividual.representation()}")
     }
 }
