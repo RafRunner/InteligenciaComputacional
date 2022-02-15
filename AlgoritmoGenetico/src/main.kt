@@ -10,8 +10,8 @@ fun main() {
             0.8,
         ),
         ElitistRouletteSelection(),
-        GenerationStopCondition(100),
-        5
+        GenerationStopCondition(1000),
+        8
     )
 
     println("Training time: " + measureTimeMillis {

@@ -14,7 +14,7 @@ class F6EvaluationFunction: EvaluationFunction {
 
     override fun evaluate(individual: Individual): Double {
         if (individual !is F6SolutionIndividual) {
-            throw java.lang.RuntimeException("Can only evaluate F6SolutionIndividual")
+            throw RuntimeException("Can only evaluate F6SolutionIndividual")
         }
 
         val x = individual.getX()
