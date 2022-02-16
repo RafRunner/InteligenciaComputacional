@@ -1,5 +1,8 @@
 import F6.RandomF6Initializer
-import model.*
+import model.ElitistRouletteSelection
+import model.GenerationStopCondition
+import model.Population
+import view.createAndShowGraph
 import kotlin.system.measureTimeMillis
 
 fun main() {
@@ -10,11 +13,14 @@ fun main() {
             0.8,
         ),
         ElitistRouletteSelection(),
-        GenerationStopCondition(1000),
+        GenerationStopCondition(100),
         8
     )
 
     println("Training time: " + measureTimeMillis {
         population.train()
     } + "ms")
+
+    createAndShowGraph("Best fitness", population.populationHistory.map { it.mostFitIndividual.fitness })
+    createAndShowGraph("Average fitness", population.populationHistory.map { it.fitnessAverage })
 }
