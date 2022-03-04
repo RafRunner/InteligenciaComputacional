@@ -5,7 +5,7 @@ import javax.swing.JFrame
 import javax.swing.JPanel
 
 
-fun createAndShowGraph(title: String, scores: List<Double>) {
+fun createAndShowGraph(title: String, scores: List<Double>, location: Point?=null): JFrame {
     val mainPanel = GraphPanel(scores)
     mainPanel.preferredSize = Dimension(850, 600)
     val frame = JFrame(title)
@@ -13,7 +13,12 @@ fun createAndShowGraph(title: String, scores: List<Double>) {
     frame.contentPane.add(mainPanel)
     frame.pack()
     frame.setLocationRelativeTo(null)
+    if (location != null) {
+        frame.location = location
+    }
     frame.isVisible = true
+
+    return frame
 }
 
 class GraphPanel(private var scores: List<Double>): JPanel() {
