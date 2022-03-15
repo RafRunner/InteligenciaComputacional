@@ -117,19 +117,11 @@ class GraphPanel(private var scores: List<Double>): JPanel() {
     }
 
     private fun getMinScore(): Double {
-        var minScore = Double.MAX_VALUE
-        for (score in scores) {
-            minScore = minScore.coerceAtMost(score)
-        }
-        return minScore
+        return scores.minOrNull() ?: scores[0]
     }
 
     private fun getMaxScore(): Double {
-        var maxScore = Double.MIN_VALUE
-        for (score in scores) {
-            maxScore = maxScore.coerceAtLeast(score)
-        }
-        return maxScore
+        return scores.maxOrNull() ?: scores[0]
     }
 
     fun changeScores(scores: List<Double>) {
