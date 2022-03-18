@@ -22,11 +22,44 @@ class Perceptron(numberOfInputs: Int,
         return activationFunction(output)
     }
 
-    fun calculateError(inputs: List<Int>, expectedValue: Int): Int {
+    fun train(inputsList: List<List<Int>>, expectedOutputs: List<Int>) {
+        var fullyLearned = false
+        var iteration = 0
+
+        while (!fullyLearned) {
+            iteration++
+            println("Starting training iteration number $iteration\n")
+
+            inputsList.indices.shuffled().forEach { index ->
+                trainForInput(inputsList[index], expectedOutputs[index])
+            }
+
+            println("Final weights: $weights\n")
+
+            fullyLearned = true
+
+            inputsList.indices.forEach { index ->
+                val input = inputsList[index]
+                val expectedOutput = expectedOutputs[index]
+                val error = calculateError(input, expectedOutput)
+                val output = calculateOutput(input)
+
+                println("Inputs $input gave error $error (actual: $output, expected: $expectedOutput)")
+                if (error != 0) {
+                    fullyLearned = false
+                }
+            }
+            println("\n=================================================================\n")
+        }
+
+        println("The perceptron is fully learned after $iteration iteration(s)")
+    }
+
+    private fun calculateError(inputs: List<Int>, expectedValue: Int): Int {
         return expectedValue - calculateOutput(inputs)
     }
 
-    fun train(inputs: List<Int>, expectedValue: Int) {
+    private fun trainForInput(inputs: List<Int>, expectedValue: Int) {
         var error = calculateError(inputs, expectedValue)
         println("Training for input: $inputs and bias $bias expecting result $expectedValue")
         println("Initial weights: $weights, with output ${calculateOutput(inputs)} and error $error")

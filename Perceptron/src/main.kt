@@ -10,35 +10,6 @@ fun main() {
 
     val perceptron = Perceptron(2, 1, ::stepActivationFunction)
 
-    var fullyLearned = false
-    var iteration = 0
-
-    while (!fullyLearned) {
-        iteration++
-        println("Starting training iteration number $iteration\n")
-
-        inputs.indices.shuffled().forEach { index ->
-            perceptron.train(inputs[index], expectedOutputs[index])
-        }
-
-        println("Final weights: ${perceptron.weights}\n")
-
-        fullyLearned = true
-
-        inputs.indices.forEach { index ->
-            val input = inputs[index]
-            val expectedOutput = expectedOutputs[index]
-            val error = perceptron.calculateError(input, expectedOutput)
-            val output = perceptron.calculateOutput(input)
-
-            println("Inputs $input gave error $error (actual: $output, expected: $expectedOutput)")
-            if (error != 0) {
-                fullyLearned = false
-            }
-        }
-        println("\n=================================================================\n")
-    }
-
-    println("The perceptron is fully learned after $iteration iteration(s)")
+    perceptron.train(inputs, expectedOutputs)
 }
 
