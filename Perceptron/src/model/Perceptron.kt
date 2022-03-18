@@ -1,22 +1,25 @@
 package model
 
-import java.lang.Integer.max
-import java.lang.Integer.min
+import java.util.concurrent.ThreadLocalRandom
 
-class Perceptron(numberOfInputs: Int, val learningRate: Int) {
+class Perceptron(numberOfInputs: Int,
+                 private val learningRate: Int,
+                 private val activationFunction: (Int) -> Int,
+                 randomWeights: Boolean = false) {
 
     var weights: List<Int>
     // Bias é uma constante igual a 1
     private val bias = 1
 
     init {
-        // Os pesos começam como 0. O primeiro é o peso do bias
-        weights = List(numberOfInputs + 1) { 0 }
+        // Os pesos começam como valores aleatórios entre -1 e 0 ou 0. O primeiro é o peso do bias
+        weights = List(numberOfInputs + 1) { if (randomWeights) ThreadLocalRandom.current().nextInt(-1, 2) else 0 }
     }
 
     // Sempre retorna um valor entre 0 e 1
     fun calculateOutput(inputs: List<Int>): Int {
-        return max(0, min(1, addBias(inputs).zip(weights).fold(0) { acc, pair -> acc + pair.first * pair.second }))
+        val output = addBias(inputs).zip(weights).fold(0) { acc, inputAndWeight -> acc + inputAndWeight.first * inputAndWeight.second }
+        return activationFunction(output)
     }
 
     fun calculateError(inputs: List<Int>, expectedValue: Int): Int {
@@ -28,7 +31,7 @@ class Perceptron(numberOfInputs: Int, val learningRate: Int) {
         println("Training for input: $inputs and bias $bias expecting result $expectedValue")
         println("Initial weights: $weights, with output ${calculateOutput(inputs)} and error $error")
 
-        while (error != 0) {
+        if (error != 0) {
             calculateNewWeights(inputs, error)
             error = calculateError(inputs, expectedValue)
             println("New weights: $weights, with output ${calculateOutput(inputs)} and error $error")
@@ -40,6 +43,6 @@ class Perceptron(numberOfInputs: Int, val learningRate: Int) {
     private fun addBias(inputs: List<Int>): List<Int> = listOf(bias) + inputs
 
     private fun calculateNewWeights(inputs: List<Int>, error: Int) {
-        weights = addBias(inputs).zip(weights).map { pair -> pair.second + (error * learningRate * pair.first) }
+        weights = addBias(inputs).zip(weights).map { inputAndWeight -> inputAndWeight.second + (error * learningRate * inputAndWeight.first) }
     }
 }
